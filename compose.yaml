@@ -8,6 +8,8 @@ services:
     stop_signal: SIGKILL
     environment:
       - CLI_ARGS=""
+    volumes:
+      - /mnt/Tank/ai/stable-diffusion/models/loras:/comfyui/models/loras
     deploy:
       resources:
         reservations:
