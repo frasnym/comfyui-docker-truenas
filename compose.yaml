@@ -9,11 +9,10 @@ services:
     environment:
       - CLI_ARGS=""
     volumes:
-      - /mnt/Tank/ai/stable-diffusion/models/loras:/comfyui/models/loras
-      - /mnt/Tank/ai/stable-diffusion/models/diffusion_models:/comfyui/models/diffusion_models
-      - /mnt/Tank/ai/stable-diffusion/models/text_encoders:/comfyui/models/text_encoders
-      - /mnt/Tank/ai/stable-diffusion/models/vae:/comfyui/models/vae
-      - /mnt/Tank/ai/stable-diffusion/models/unet:/comfyui/models/unet
+      - /mnt/Tank/ai/stable-diffusion/models:/comfyui/models
+      - /mnt/Tank/ai/stable-diffusion/custom_nodes:/comfyui/custom_nodes
+      - /mnt/Tank/ai/stable-diffusion/input:/comfyui/input
+      - /mnt/Tank/ai/stable-diffusion/output:/comfyui/output
     deploy:
       resources:
         reservations:
