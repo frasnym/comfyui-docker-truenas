@@ -25,48 +25,46 @@ setup_comfyui_manager() {
     fi
 }
 
-# Function to ensure model directories exist
+# Function to ensure model directories exist by syncing with ComfyUI repo structure
 setup_model_directories() {
     echo "=== Setting up model directories ==="
     
-    local MODEL_DIRS=(
-        "diffusion_models"
-        "audio_encoders"
-        "checkpoints"
-        "clip"
-        "clip_vision"
-        "configs"
-        "controlnet"
-        "diffusers"
-        "embeddings"
-        "gligen"
-        "hypernetworks"
-        "loras"
-        "model_patches"
-        "photomaker"
-        "style_models"
-        "text_encoders"
-        "unet"
-        "upscale_models"
-        "vae"
-        "vae_approx"
-    )
+    # Create temp directory
+    local temp_dir=$(mktemp -d)
     
-    local created_count=0
+    echo "  Cloning ComfyUI repository to temporary location..."
     
-    for dir in "${MODEL_DIRS[@]}"; do
-        if [ ! -d "/comfyui/models/$dir" ]; then
-            echo "  Creating: /comfyui/models/$dir"
-            mkdir -p "/comfyui/models/$dir"
-            ((created_count++))
+    # Clone the entire ComfyUI repository (shallow clone for speed)
+    git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git "$temp_dir/ComfyUI"
+    
+    echo "  Repository cloned successfully"
+    
+    local copied_count=0
+    local skipped_count=0
+    
+    # Loop through each subdirectory in the temp models folder
+    for model_subdir in "$temp_dir/ComfyUI/models"/*; do
+        if [ -d "$model_subdir" ]; then
+            # Extract just the directory name
+            local dir_name=$(basename "$model_subdir")
+            
+            # Check if directory exists in mounted volume
+            if [ ! -d "/comfyui/models/$dir_name" ]; then
+                echo "  Copying: $dir_name (with contents)"
+                # Copy the entire directory with all contents
+                cp -r "$model_subdir" "/comfyui/models/$dir_name"
+                ((copied_count++))
+            else
+                ((skipped_count++))
+            fi
         fi
     done
     
-    if [ $created_count -eq 0 ]; then
-        echo "  All model directories already exist"
-    else
-        echo "  Created $created_count new model director(ies)"
-    fi
+    echo "  Summary: Copied $copied_count new director(ies), skipped $skipped_count existing"
+    
+    # Cleanup temp directory
+    echo "  Cleaning up temporary files..."
+    rm -rf "$temp_dir"
 }
 
 # Main execution
