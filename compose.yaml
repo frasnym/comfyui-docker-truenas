@@ -1,6 +1,3 @@
-volumes:
-  comfyui_custom_nodes: {}
-
 services:
   comfyui:
     build:
@@ -12,7 +9,7 @@ services:
     environment:
       - AUTO_UPDATE_MANAGER=true # Set to false to skip updates
     volumes:
-      - comfyui_custom_nodes:/comfyui/custom_nodes
+      - /mnt/Tank/ai/stable-diffusion/custom_nodes:/comfyui/custom_nodes
       - /mnt/Tank/ai/stable-diffusion/models:/comfyui/models
       - /mnt/Tank/ai/stable-diffusion/input:/comfyui/input
       - /mnt/Tank/ai/stable-diffusion/output:/comfyui/output
