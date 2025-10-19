@@ -1,3 +1,6 @@
+volumes:
+  comfyui_custom_nodes: {}
+
 services:
   comfyui:
     build:
@@ -6,11 +9,9 @@ services:
     ports:
       - "${COMFYUI_PORT:-8188}:8188"
     stop_signal: SIGKILL
-    environment:
-      - CLI_ARGS=""
     volumes:
+      - comfyui_custom_nodes:/comfyui/custom_nodes
       - /mnt/Tank/ai/stable-diffusion/models:/comfyui/models
-      - /mnt/Tank/ai/stable-diffusion/custom_nodes:/comfyui/custom_nodes
       - /mnt/Tank/ai/stable-diffusion/input:/comfyui/input
       - /mnt/Tank/ai/stable-diffusion/output:/comfyui/output
     deploy:

@@ -67,8 +67,7 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui && \
     pip3 install -r requirements.txt
 
 # Setup ComfyUI Manager
-RUN set -xe && \
-    git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager && \
+RUN git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager && \
     cd /comfyui/custom_nodes/ComfyUI-Manager && \
     git checkout main && \
     pip3 install -r requirements.txt
@@ -77,6 +76,9 @@ ENV ROOT=/comfyui
 
 WORKDIR ${ROOT}
 ENV NVIDIA_VISIBLE_DEVICES=all
-ENV CLI_ARGS=""
 EXPOSE 8188
-CMD python -u main.py --listen
+
+# Add entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
