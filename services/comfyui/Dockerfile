@@ -66,6 +66,13 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui && \
     git reset --hard v0.3.65 && \
     pip3 install -r requirements.txt
 
+# Setup ComfyUI Manager
+RUN set -xe && \
+    git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager && \
+    cd /comfyui/custom_nodes/ComfyUI-Manager && \
+    git checkout main && \
+    pip3 install -r requirements.txt
+
 ENV ROOT=/comfyui
 
 WORKDIR ${ROOT}
