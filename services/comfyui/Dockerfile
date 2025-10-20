@@ -73,7 +73,7 @@ RUN git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_n
     pip3 install -r requirements.txt
 
 # Setup ComfyUI GGUF
-RUN git clone https://github.com/city96/ComfyUI-GGUF && \
+RUN git clone https://github.com/city96/ComfyUI-GGUF /comfyui/custom_nodes/ComfyUI-GGUF && \
     cd /comfyui/custom_nodes/ComfyUI-GGUF && \
     pip3 install --upgrade gguf
 
