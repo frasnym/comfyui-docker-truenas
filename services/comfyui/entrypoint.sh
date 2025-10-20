@@ -38,6 +38,34 @@ setup_comfyui_manager() {
     fi
 }
 
+# Function to setup/update ComfyUI-GGUF
+setup_comfyui_gguf() {
+    echo "=== Setting up ComfyUI-GGUF ==="
+    
+    if [ ! -d "/comfyui/custom_nodes/ComfyUI-GGUF" ]; then
+        echo "ComfyUI-GGUF not found, installing..."
+        git clone https://github.com/city96/ComfyUI-GGUF /comfyui/custom_nodes/ComfyUI-GGUF
+        cd /comfyui/custom_nodes/ComfyUI-GGUF
+        pip3 install --upgrade gguf
+        echo "ComfyUI-GGUF installed successfully!"
+    else
+        if [ "${AUTO_UPDATE_GGUF:-true}" = "true" ]; then
+            echo "ComfyUI-GGUF found, pulling latest changes..."
+            cd /comfyui/custom_nodes/ComfyUI-GGUF
+            
+            # Clean up any stale lock files
+            cleanup_git_locks ".git"
+            
+            git reset --hard HEAD
+            git pull origin main
+            pip3 install --upgrade gguf
+            echo "ComfyUI-GGUF updated successfully!"
+        else
+            echo "ComfyUI-GGUF found, skipping update (AUTO_UPDATE_GGUF=false)"
+        fi
+    fi
+}
+
 # Main execution
 main() {
     echo "========================================="
@@ -46,6 +74,9 @@ main() {
     
     # Setup ComfyUI-Manager
     setup_comfyui_manager
+    
+    # Setup ComfyUI-GGUF
+    setup_comfyui_gguf
     
     echo "========================================="
     echo "Starting ComfyUI..."
