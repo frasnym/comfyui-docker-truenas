@@ -17,6 +17,7 @@ services:
       - /mnt/Tank/ai/stable-diffusion/models/text_encoders:/comfyui/models/text_encoders
       - /mnt/Tank/ai/stable-diffusion/models/vae:/comfyui/models/vae
       - /mnt/Tank/ai/stable-diffusion/models/unet:/comfyui/models/unet
+      - /mnt/Tank/ai/stable-diffusion/models/checkpoints:/comfyui/models/checkpoints
     deploy:
       resources:
         reservations:
