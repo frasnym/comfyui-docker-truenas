@@ -77,6 +77,16 @@ RUN git clone https://github.com/city96/ComfyUI-GGUF.git /comfyui/custom_nodes/C
     cd /comfyui/custom_nodes/ComfyUI-GGUF && \
     pip3 install --upgrade gguf
 
+# Setup ComfyUI Impact Pack
+RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack.git /comfyui/custom_nodes/comfyui-impact-pack && \
+    cd /comfyui/custom_nodes/comfyui-impact-pack && \
+    pip3 install -r requirements.txt
+
+# Setup ComfyUI Easy Use
+RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git /comfyui/custom_nodes/ComfyUI-Easy-Use && \
+    cd /comfyui/custom_nodes/ComfyUI-Easy-Use && \
+    pip3 install -r requirements.txt
+
 ENV ROOT=/comfyui
 
 WORKDIR ${ROOT}
