@@ -1,152 +1,131 @@
 #!/bin/bash
 set -e
 
-# Function to clean up stale git lock files
+# Configuration
+readonly COMFYUI_ROOT="/comfyui"
+readonly CUSTOM_NODES_DIR="${COMFYUI_ROOT}/custom_nodes"
+
+# Plugin configurations: name, repo, directory, branch, dependencies command
+declare -A PLUGINS=(
+    ["ComfyUI-Manager"]="https://github.com/Comfy-Org/ComfyUI-Manager.git|ComfyUI-Manager|main|pip3 install -r requirements.txt|AUTO_UPDATE_MANAGER"
+    ["ComfyUI-GGUF"]="https://github.com/city96/ComfyUI-GGUF.git|ComfyUI-GGUF|main|pip3 install --upgrade gguf|AUTO_UPDATE_GGUF"
+    ["ComfyUI-Impact-Pack"]="https://github.com/ltdrdata/ComfyUI-Impact-Pack.git|comfyui-impact-pack|main|pip3 install -r requirements.txt|AUTO_UPDATE_IMPACT_PACK"
+    ["ComfyUI-Easy-Use"]="https://github.com/yolain/ComfyUI-Easy-Use.git|ComfyUI-Easy-Use|main|pip3 install -r requirements.txt|AUTO_UPDATE_EASY_USE"
+)
+
+# Logging functions
+log_info() {
+    echo "[INFO] $*"
+}
+
+log_success() {
+    echo "[SUCCESS] $*"
+}
+
+log_section() {
+    echo "========================================="
+    echo "$*"
+    echo "========================================="
+}
+
+# Clean up stale git lock files
 cleanup_git_locks() {
     local git_dir="$1"
     if [ -d "$git_dir" ]; then
-        echo "  Cleaning up stale git lock files..."
+        log_info "Cleaning up stale git lock files..."
         find "$git_dir" -name "*.lock" -type f -delete 2>/dev/null || true
     fi
 }
 
-# Function to setup/update ComfyUI-Manager
-setup_comfyui_manager() {
-    echo "=== Setting up ComfyUI-Manager ==="
+# Install dependencies for a plugin
+install_dependencies() {
+    local deps_cmd="$1"
+    if [ -n "$deps_cmd" ]; then
+        log_info "Installing dependencies..."
+        eval "$deps_cmd"
+    fi
+}
+
+# Update existing plugin
+update_plugin() {
+    local plugin_dir="$1"
+    local branch="$2"
+    local deps_cmd="$3"
     
-    if [ ! -d "/comfyui/custom_nodes/ComfyUI-Manager" ]; then
-        echo "ComfyUI-Manager not found, installing..."
-        git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager
-        cd /comfyui/custom_nodes/ComfyUI-Manager
-        pip3 install -r requirements.txt
-        echo "ComfyUI-Manager installed successfully!"
+    cd "$plugin_dir"
+    cleanup_git_locks ".git"
+    
+    log_info "Pulling latest changes from branch: $branch"
+    git reset --hard HEAD
+    git pull origin "$branch"
+    
+    install_dependencies "$deps_cmd"
+    log_success "Updated successfully!"
+}
+
+# Install new plugin
+install_plugin() {
+    local repo_url="$1"
+    local plugin_dir="$2"
+    local branch="$3"
+    local deps_cmd="$4"
+    
+    log_info "Installing from $repo_url..."
+    git clone "$repo_url" "$plugin_dir"
+    cd "$plugin_dir"
+    git checkout "$branch"
+    
+    install_dependencies "$deps_cmd"
+    log_success "Installed successfully!"
+}
+
+# Setup or update a plugin
+setup_plugin() {
+    local name="$1"
+    local repo_url="$2"
+    local dir_name="$3"
+    local branch="$4"
+    local deps_cmd="$5"
+    local env_var="$6"
+    
+    local plugin_dir="${CUSTOM_NODES_DIR}/${dir_name}"
+    local auto_update="${!env_var:-true}"
+    
+    log_section "Setting up $name"
+    
+    if [ ! -d "$plugin_dir" ]; then
+        install_plugin "$repo_url" "$plugin_dir" "$branch" "$deps_cmd"
     else
-        if [ "${AUTO_UPDATE_MANAGER:-true}" = "true" ]; then
-            echo "ComfyUI-Manager found, pulling latest changes..."
-            cd /comfyui/custom_nodes/ComfyUI-Manager
-            
-            # Clean up any stale lock files
-            cleanup_git_locks ".git"
-            
-            git reset --hard HEAD
-            git pull origin main
-            pip3 install -r requirements.txt
-            echo "ComfyUI-Manager updated successfully!"
+        if [ "$auto_update" = "true" ]; then
+            log_info "$name found, updating..."
+            update_plugin "$plugin_dir" "$branch" "$deps_cmd"
         else
-            echo "ComfyUI-Manager found, skipping update (AUTO_UPDATE_MANAGER=false)"
+            log_info "$name found, skipping update ($env_var=false)"
         fi
     fi
 }
 
-# Function to setup/update ComfyUI-GGUF
-setup_comfyui_gguf() {
-    echo "=== Setting up ComfyUI-GGUF ==="
-    
-    if [ ! -d "/comfyui/custom_nodes/ComfyUI-GGUF" ]; then
-        echo "ComfyUI-GGUF not found, installing..."
-        git clone https://github.com/city96/ComfyUI-GGUF /comfyui/custom_nodes/ComfyUI-GGUF
-        cd /comfyui/custom_nodes/ComfyUI-GGUF
-        pip3 install --upgrade gguf
-        echo "ComfyUI-GGUF installed successfully!"
-    else
-        if [ "${AUTO_UPDATE_GGUF:-true}" = "true" ]; then
-            echo "ComfyUI-GGUF found, pulling latest changes..."
-            cd /comfyui/custom_nodes/ComfyUI-GGUF
-            
-            # Clean up any stale lock files
-            cleanup_git_locks ".git"
-            
-            git reset --hard HEAD
-            git pull origin main
-            pip3 install --upgrade gguf
-            echo "ComfyUI-GGUF updated successfully!"
-        else
-            echo "ComfyUI-GGUF found, skipping update (AUTO_UPDATE_GGUF=false)"
-        fi
-    fi
-}
-
-# Function to setup/update ComfyUI-Impact-Pack
-setup_comfyui_impact_pack() {
-    echo "=== Setting up ComfyUI-Impact-Pack ==="
-    
-    if [ ! -d "/comfyui/custom_nodes/comfyui-impact-pack" ]; then
-        echo "ComfyUI-Impact-Pack not found, installing..."
-        git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack.git /comfyui/custom_nodes/comfyui-impact-pack
-        cd /comfyui/custom_nodes/comfyui-impact-pack
-        pip3 install -r requirements.txt
-        echo "ComfyUI-Impact-Pack installed successfully!"
-    else
-        if [ "${AUTO_UPDATE_IMPACT_PACK:-true}" = "true" ]; then
-            echo "ComfyUI-Impact-Pack found, pulling latest changes..."
-            cd /comfyui/custom_nodes/comfyui-impact-pack
-            
-            # Clean up any stale lock files
-            cleanup_git_locks ".git"
-            
-            git reset --hard HEAD
-            git pull origin main
-            pip3 install -r requirements.txt
-            echo "ComfyUI-Impact-Pack updated successfully!"
-        else
-            echo "ComfyUI-Impact-Pack found, skipping update (AUTO_UPDATE_IMPACT_PACK=false)"
-        fi
-    fi
-}
-# Function to setup/update ComfyUI-Easy-Use
-setup_comfyui_easy_use() {
-    echo "=== Setting up ComfyUI-Easy-Use ==="
-    
-    if [ ! -d "/comfyui/custom_nodes/ComfyUI-Easy-Use" ]; then
-        echo "ComfyUI-Easy-Use not found, installing..."
-        git clone https://github.com/yolain/ComfyUI-Easy-Use.git /comfyui/custom_nodes/ComfyUI-Easy-Use
-        cd /comfyui/custom_nodes/ComfyUI-Easy-Use
-        pip3 install -r requirements.txt
-        echo "ComfyUI-Easy-Use installed successfully!"
-    else
-        if [ "${AUTO_UPDATE_EASY_USE:-true}" = "true" ]; then
-            echo "ComfyUI-Easy-Use found, pulling latest changes..."
-            cd /comfyui/custom_nodes/ComfyUI-Easy-Use
-            
-            # Clean up any stale lock files
-            cleanup_git_locks ".git"
-            
-            git reset --hard HEAD
-            git pull origin main
-            pip3 install -r requirements.txt
-            echo "ComfyUI-Easy-Use updated successfully!"
-        else
-            echo "ComfyUI-Easy-Use found, skipping update (AUTO_UPDATE_EASY_USE=false)"
-        fi
-    fi
+# Process all plugins
+setup_all_plugins() {
+    for plugin_name in "${!PLUGINS[@]}"; do
+        IFS='|' read -r repo dir branch deps env_var <<< "${PLUGINS[$plugin_name]}"
+        setup_plugin "$plugin_name" "$repo" "$dir" "$branch" "$deps" "$env_var"
+    done
 }
 
 # Main execution
 main() {
-    echo "========================================="
-    echo "ComfyUI Initialization"
-    echo "========================================="
+    log_section "ComfyUI Initialization"
     
-    # Setup ComfyUI-Manager
-    setup_comfyui_manager
+    # Setup all plugins
+    setup_all_plugins
     
-    # Setup ComfyUI-GGUF
-    setup_comfyui_gguf
-
-    # Setup ComfyUI-Impact-Pack
-    setup_comfyui_impact_pack
-    
-    # Setup ComfyUI-Easy-Use
-    setup_comfyui_easy_use
-    
-    echo "========================================="
-    echo "Starting ComfyUI..."
-    echo "========================================="
+    log_section "Starting ComfyUI..."
     
     # Start ComfyUI
-    cd /comfyui
+    cd "$COMFYUI_ROOT"
     exec python -u main.py --listen "$@"
 }
 
 # Run main function
-main
+main "$@"
