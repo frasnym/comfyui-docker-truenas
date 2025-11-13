@@ -66,7 +66,6 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui && \
 
 # Setup ComfyUI Manager
 RUN git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager && \
-    git checkout main && \
     pip3 install -r /comfyui/custom_nodes/ComfyUI-Manager/requirements.txt
 
 # Setup ComfyUI GGUF
