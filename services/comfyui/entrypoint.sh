@@ -11,6 +11,9 @@ declare -A PLUGINS=(
     ["ComfyUI-GGUF"]="https://github.com/city96/ComfyUI-GGUF.git|ComfyUI-GGUF|main|pip3 install --upgrade gguf|AUTO_UPDATE_GGUF"
     ["ComfyUI-Impact-Pack"]="https://github.com/ltdrdata/ComfyUI-Impact-Pack.git|comfyui-impact-pack|main|pip3 install -r requirements.txt|AUTO_UPDATE_IMPACT_PACK"
     ["ComfyUI-Easy-Use"]="https://github.com/yolain/ComfyUI-Easy-Use.git|ComfyUI-Easy-Use|main|pip3 install -r requirements.txt|AUTO_UPDATE_EASY_USE"
+    ["rgthree-comfy"]="https://github.com/rgthree/rgthree-comfy.git|rgthree-comfy|main|pip3 install -r requirements.txt|AUTO_UPDATE_RGTHREE"
+    ["QwenEditsUtil"]="https://github.com/lrzjason/Comfyui-QwenEditUtils.git|Comfyui-QwenEditUtils|main||AUTO_UPDATE_QWEN"
+    ["ComfyUI-SUPIR"]="https://github.com/kijai/ComfyUI-SUPIR.git|ComfyUI-SUPIR|main|pip3 install -r requirements.txt|AUTO_UPDATE_SUPIR"
 )
 
 # Logging functions
