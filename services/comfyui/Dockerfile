@@ -63,7 +63,6 @@ RUN apt-get update && \
 WORKDIR /
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui && \
     cd comfyui && \
-    git reset --hard v0.3.65 && \
     pip3 install -r requirements.txt
 
 # Setup ComfyUI Manager
