@@ -77,6 +77,10 @@ RUN git clone https://github.com/city96/ComfyUI-GGUF.git /comfyui/custom_nodes/C
 RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack.git /comfyui/custom_nodes/comfyui-impact-pack && \
     pip3 install -r /comfyui/custom_nodes/comfyui-impact-pack/requirements.txt
 
+# Setup ComfyUI Impact Subpack
+RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git /comfyui/custom_nodes/comfyui-impact-subpack && \
+    pip3 install -r /comfyui/custom_nodes/comfyui-impact-subpack/requirements.txt
+
 # Setup ComfyUI Easy Use
 RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git /comfyui/custom_nodes/ComfyUI-Easy-Use && \
     pip3 install -r /comfyui/custom_nodes/ComfyUI-Easy-Use/requirements.txt
