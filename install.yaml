@@ -1,2 +1,3 @@
 include:
-  - /mnt/Tank/apps/comfyui/compose.yaml
+  - path: /mnt/Tank/apps/comfyui/compose.yaml
+services: {}
