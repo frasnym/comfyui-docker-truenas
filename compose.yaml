@@ -27,6 +27,8 @@ services:
       - /mnt/Tank/ai/stable-diffusion/models/SEEDVR2:/comfyui/models/SEEDVR2
       - /mnt/Tank/ai/stable-diffusion/models/embeddings:/comfyui/models/embeddings
       - /mnt/Tank/ai/stable-diffusion/models/upscale_models:/comfyui/models/upscale_models
+      - /mnt/Tank/ai/stable-diffusion/models/ultralytics:/comfyui/models/ultralytics
+      - /mnt/Tank/ai/stable-diffusion/models/sams:/comfyui/models/sams
     deploy:
       resources:
         reservations:
