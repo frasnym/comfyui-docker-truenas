@@ -7,14 +7,14 @@ readonly CUSTOM_NODES_DIR="${COMFYUI_ROOT}/custom_nodes"
 
 # Plugin configurations: name, repo, directory, branch, dependencies command
 declare -A PLUGINS=(
-    ["ComfyUI-Manager"]="https://github.com/Comfy-Org/ComfyUI-Manager.git|ComfyUI-Manager|main|pip3 install -r requirements.txt|AUTO_UPDATE_MANAGER"
-    ["ComfyUI-GGUF"]="https://github.com/city96/ComfyUI-GGUF.git|ComfyUI-GGUF|main|pip3 install --upgrade gguf|AUTO_UPDATE_GGUF"
-    ["ComfyUI-Impact-Pack"]="https://github.com/ltdrdata/ComfyUI-Impact-Pack.git|comfyui-impact-pack|Main|pip3 install -r requirements.txt|AUTO_UPDATE_IMPACT_PACK"
-    ["ComfyUI-Impact-Subpack"]="https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git|comfyui-impact-subpack|main|pip3 install -r requirements.txt|AUTO_UPDATE_IMPACT_SUBPACK"
-    ["ComfyUI-Easy-Use"]="https://github.com/yolain/ComfyUI-Easy-Use.git|ComfyUI-Easy-Use|main|pip3 install -r requirements.txt|AUTO_UPDATE_EASY_USE"
-    ["rgthree-comfy"]="https://github.com/rgthree/rgthree-comfy.git|rgthree-comfy|main|pip3 install -r requirements.txt|AUTO_UPDATE_RGTHREE"
-    ["QwenEditsUtil"]="https://github.com/lrzjason/Comfyui-QwenEditUtils.git|Comfyui-QwenEditUtils|master||AUTO_UPDATE_QWEN"
-    ["ComfyUI-SUPIR"]="https://github.com/kijai/ComfyUI-SUPIR.git|ComfyUI-SUPIR|main|pip3 install -r requirements.txt|AUTO_UPDATE_SUPIR"
+    ["ComfyUI-Manager"]="https://github.com/Comfy-Org/ComfyUI-Manager.git|ComfyUI-Manager|main|pip3 install -r requirements.txt"
+    ["ComfyUI-GGUF"]="https://github.com/city96/ComfyUI-GGUF.git|ComfyUI-GGUF|main|pip3 install --upgrade gguf"
+    ["ComfyUI-Impact-Pack"]="https://github.com/ltdrdata/ComfyUI-Impact-Pack.git|comfyui-impact-pack|Main|pip3 install -r requirements.txt"
+    ["ComfyUI-Impact-Subpack"]="https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git|comfyui-impact-subpack|main|pip3 install -r requirements.txt"
+    ["ComfyUI-Easy-Use"]="https://github.com/yolain/ComfyUI-Easy-Use.git|ComfyUI-Easy-Use|main|pip3 install -r requirements.txt"
+    ["rgthree-comfy"]="https://github.com/rgthree/rgthree-comfy.git|rgthree-comfy|main|pip3 install -r requirements.txt"
+    ["QwenEditsUtil"]="https://github.com/lrzjason/Comfyui-QwenEditUtils.git|Comfyui-QwenEditUtils|master|"
+    ["ComfyUI-SUPIR"]="https://github.com/kijai/ComfyUI-SUPIR.git|ComfyUI-SUPIR|main|pip3 install -r requirements.txt"
 )
 
 # Logging functions
@@ -90,10 +90,9 @@ setup_plugin() {
     local dir_name="$3"
     local branch="$4"
     local deps_cmd="$5"
-    local env_var="$6"
     
     local plugin_dir="${CUSTOM_NODES_DIR}/${dir_name}"
-    local auto_update="${!env_var:-true}"
+    local auto_update="${AUTO_UPDATE:-true}"
     
     log_section "Setting up $name"
     
@@ -104,7 +103,7 @@ setup_plugin() {
             log_info "$name found, updating..."
             update_plugin "$plugin_dir" "$branch" "$deps_cmd"
         else
-            log_info "$name found, skipping update ($env_var=false)"
+            log_info "$name found, skipping update (AUTO_UPDATE=false)"
         fi
     fi
 }
@@ -112,8 +111,8 @@ setup_plugin() {
 # Process all plugins
 setup_all_plugins() {
     for plugin_name in "${!PLUGINS[@]}"; do
-        IFS='|' read -r repo dir branch deps env_var <<< "${PLUGINS[$plugin_name]}"
-        setup_plugin "$plugin_name" "$repo" "$dir" "$branch" "$deps" "$env_var"
+        IFS='|' read -r repo dir branch deps <<< "${PLUGINS[$plugin_name]}"
+        setup_plugin "$plugin_name" "$repo" "$dir" "$branch" "$deps"
     done
 }
 

@@ -59,45 +59,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-# Setup ComfyUI
+# Setup ComfyUI (base installation only)
 WORKDIR /
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui && \
     pip3 install -r /comfyui/requirements.txt
 
-# Setup ComfyUI Manager
-RUN git clone https://github.com/Comfy-Org/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager && \
-    pip3 install -r /comfyui/custom_nodes/ComfyUI-Manager/requirements.txt
-
-# Setup ComfyUI GGUF
-RUN git clone https://github.com/city96/ComfyUI-GGUF.git /comfyui/custom_nodes/ComfyUI-GGUF && \
-    cd /comfyui/custom_nodes/ComfyUI-GGUF && \
-    pip3 install --upgrade gguf
-
-# Setup ComfyUI Impact Pack
-RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack.git /comfyui/custom_nodes/comfyui-impact-pack && \
-    pip3 install -r /comfyui/custom_nodes/comfyui-impact-pack/requirements.txt
-
-# Setup ComfyUI Impact Subpack
-RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git /comfyui/custom_nodes/comfyui-impact-subpack && \
-    pip3 install -r /comfyui/custom_nodes/comfyui-impact-subpack/requirements.txt
-
-# Setup ComfyUI Easy Use
-RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git /comfyui/custom_nodes/ComfyUI-Easy-Use && \
-    pip3 install -r /comfyui/custom_nodes/ComfyUI-Easy-Use/requirements.txt
-
-# Setup rgthree
-RUN git clone https://github.com/rgthree/rgthree-comfy.git /comfyui/custom_nodes/rgthree-comfy && \
-    pip3 install -r /comfyui/custom_nodes/rgthree-comfy/requirements.txt
-
-# Setup QwenEditsUtil
-RUN git clone https://github.com/lrzjason/Comfyui-QwenEditUtils.git /comfyui/custom_nodes/Comfyui-QwenEditUtils
-
-# Setup SUPIR
-RUN git clone https://github.com/kijai/ComfyUI-SUPIR.git /comfyui/custom_nodes/ComfyUI-SUPIR && \
-    pip3 install -r /comfyui/custom_nodes/ComfyUI-SUPIR/requirements.txt
-
-# Reinstall ComfyUI dependencies
-RUN cd /comfyui && pip3 install -r requirements.txt
+# Create custom_nodes directory for volume mount
+RUN mkdir -p /comfyui/custom_nodes
 
 ENV ROOT=/comfyui
 

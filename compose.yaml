@@ -6,15 +6,9 @@ services:
     ports:
       - "${COMFYUI_PORT:-8188}:8188"
     stop_signal: SIGKILL
-    environment: # Set to false to skip updates
-      - AUTO_UPDATE_MANAGER=true
-      - AUTO_UPDATE_GGUF=true
-      - AUTO_UPDATE_IMPACT_PACK=true
-      - AUTO_UPDATE_IMPACT_SUBPACK=true
-      - AUTO_UPDATE_EASY_USE=true
-      - AUTO_UPDATE_RGTHREE=true
-      - AUTO_UPDATE_QWEN=true
-      - AUTO_UPDATE_SUPIR=true
+    environment:
+      # Set to false to skip plugin updates on container start
+      - AUTO_UPDATE=true
     volumes:
       - /mnt/Tank/ai/stable-diffusion/custom_nodes:/comfyui/custom_nodes
       - /mnt/Tank/ai/stable-diffusion/input:/comfyui/input
