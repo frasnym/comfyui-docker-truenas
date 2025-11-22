@@ -10,6 +10,8 @@ services:
       # Set to false to skip plugin updates on container start
       - AUTO_UPDATE=true
     volumes:
+      # Mount entrypoint.sh to allow updates without rebuilding image
+      - ./services/comfyui/entrypoint.sh:/entrypoint.sh:ro
       - /mnt/Tank/ai/stable-diffusion/custom_nodes:/comfyui/custom_nodes
       - /mnt/Tank/ai/stable-diffusion/input:/comfyui/input
       - /mnt/Tank/ai/stable-diffusion/output:/comfyui/output
