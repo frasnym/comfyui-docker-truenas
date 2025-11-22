@@ -15,6 +15,7 @@ declare -A PLUGINS=(
     ["rgthree-comfy"]="https://github.com/rgthree/rgthree-comfy.git|rgthree-comfy|main|pip3 install -r requirements.txt"
     ["QwenEditsUtil"]="https://github.com/lrzjason/Comfyui-QwenEditUtils.git|Comfyui-QwenEditUtils|master|"
     ["ComfyUI-SUPIR"]="https://github.com/kijai/ComfyUI-SUPIR.git|ComfyUI-SUPIR|main|pip3 install -r requirements.txt"
+    ["ComfyUI-Crystools"]="https://github.com/crystian/ComfyUI-Crystools.git|comfyui-crystools|main|pip3 install -r requirements.txt"
 )
 
 # Logging functions
